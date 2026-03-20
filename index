@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Presentation</title>
+    <style>
+        /* =========================================
+           CSS 変数（カラースキーム設定）
+           ========================================= */
+        :root {
+            /* デフォルト（ライトモード）の定義 */
+            --bg-color: #ECF0F1;       /* 背景色: ライトグレー */
+            --text-color: #2C3E50;     /* テキスト: ダークブルー */
+            --primary-color: #2C3E50;  /* メインカラー: ダークブルー */
+            --accent-color: #E74C3C;   /* アクセント: レッド */
+            --card-bg: #FFFFFF;        /* カード背景: 白 */
+            --shadow: 0 10px 30px rgba(44, 62, 80, 0.1);
+            --transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        /* ダークモード設定（デフォルトとして使用） */
+        [data-theme="dark"] {
+            --bg-color: #1a252f;       /* より深いダークブルー（背景） */
+            --text-color: #ECF0F1;     /* テキスト: ライトグレー */
+            --primary-color: #ECF0F1;  /* メイン: ライトグレー */
+            --accent-color: #E74C3C;   /* アクセント: レッド（維持） */
+            --card-bg: #2C3E50;        /* カード背景: ダークブルー */
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        /* =========================================
+           基本リセットとベーススタイル
+           ========================================= */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            transition: background-color 0.4s ease, color 0.4s ease;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* =========================================
+           ヘッダー・ナビゲーション
+           ========================================= */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 5%;
+            background-color: var(--card-bg);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: background-color 0.4s ease;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            letter-spacing: 1px;
+        }
+
+        .logo span {
+            color: var(--accent-color);
+        }
+
+        /* テーマ切り替えボタン */
+        .theme-toggle {
+            background: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 8px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: bold;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .theme-toggle:hover {
+            background-color: var(--primary-color);
+            color: var(--bg-color);
+        }
+
+        /* =========================================
+           ヒーローセクション（挨拶・紹介）
+           ========================================= */
+        .hero {
+            text-align: center;
+            padding: 100px 20px 60px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            opacity: 0.8;
+            margin-bottom: 10px;
+        }
+
+        /* =========================================
+           ギャラリーセクション (CSS Grid)
+           ========================================= */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
+            padding: 0 5% 80px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* 画像カードのスタイル */
+        .gallery-item {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: var(--transition);
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        .gallery-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-10px);
+        }
+
+        .img-container {
+            position: relative;
+            width: 100%;
+            height: 280px;
+            overflow: hidden;
+        }
+
+        .img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+            display: block;
+        }
+
+        .gallery-item:hover .img-container img {
+            transform: scale(1.08);
+        }
+
+        .img-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(44, 62, 80, 0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .gallery-item:hover .img-overlay {
+            opacity: 1;
+        }
+
+        .img-overlay-icon {
+            color: white;
+            font-size: 3rem;
+            font-weight: 300;
+            transform: scale(0.5);
+            transition: var(--transition);
+        }
+
+        .gallery-item:hover .img-overlay-icon {
+            transform: scale(1);
+        }
+
+        .item-info {
+            padding: 25px;
+        }
+
+        .item-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+            color: var(--primary-color);
+        }
+
+        .item-info p {
+            font-size: 0.95rem;
+            opacity: 0.7;
+            display: flex;
+            align-items: center;
+        }
+
+        .item-info p::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent-color);
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        /* =========================================
+           モーダル（画像拡大表示）
+           ========================================= */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(15, 23, 33, 0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90vh;
+        }
+
+        .modal img {
+            max-width: 100%;
+            max-height: 90vh;
+            border-radius: 8px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            transform: scale(0.95);
+            transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .modal.active img {
+            transform: scale(1);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            background: none;
+            border: none;
+        }
+
+        .modal-close:hover {
+            color: var(--accent-color);
+        }
+
+        /* =========================================
+           フッター
+           ========================================= */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            opacity: 0.6;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 600px) {
+            .gallery {
+                grid-template-columns: 1fr;
+            }
+            .hero {
+                padding: 60px 20px 40px;
+            }
+            .modal-close {
+                top: 10px;
+                right: 10px;
+                background-color: rgba(0,0,0,0.5);
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<!-- 初期状態でダークモードを適用 -->
+<body data-theme="dark">
+
+    <!-- ヘッダー -->
+    <header>
+        <div class="logo">Port<span>folio</span></div>
+        <button class="theme-toggle" id="theme-toggle">
+            <!-- 初期状態がダークなので、アイコンは太陽(Light切り替え用)に設定 -->
+            <span id="theme-icon">??</span>
+            <span id="theme-text">Light Mode</span>
+        </button>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <main>
+        <section class="hero">
+            <h1>3D Modeling Progress</h1>
+            <p>キャラクター「ながにゃん」の3Dモデル制作進捗レポートです。</p>
+            <p>3DF Zephyrを用いたモデリング形状およびテクスチャマッピングの状況をご確認ください。</p>
+        </section>
+
+        <!-- 画像ギャラリー -->
+        <section class="gallery" id="gallery">
+            
+            <article class="gallery-item">
+                <div class="img-container">
+                    <img src="ProgressReport-01.JPG" alt="3Dモデル 正面（テクスチャあり）">
+                    <div class="img-overlay">
+                        <div class="img-overlay-icon">+</div>
+                    </div>
+                </div>
+                <div class="item-info">
+                    <h3>正面ビュー（完成イメージ）</h3>
+                    <p>テクスチャを適用した正面からのレンダリング状態です。</p>
+                </div>
+            </article>
+
+            <article class="gallery-item">
+                <div class="img-container">
+                    <img src="ProgressReport-02.JPG" alt="3Dモデル 斜めアングル">
+                    <div class="img-overlay">
+                        <div class="img-overlay-icon">+</div>
+                    </div>
+                </div>
+                <div class="item-info">
+                    <h3>斜めアングル</h3>
+                    <p>立体感やプロポーションを確認するための斜めからのビューです。</p>
+                </div>
+            </article>
+
+            <article class="gallery-item">
+                <div class="img-container">
+                    <img src="ProgressReport-03.JPG" alt="3Dモデル 背面（テクスチャあり）">
+                    <div class="img-overlay">
+                        <div class="img-overlay-icon">+</div>
+                    </div>
+                </div>
+                <div class="item-info">
+                    <h3>背面ビュー</h3>
+                    <p>背面の模様やディテールのテクスチャマッピング状態です。</p>
+                </div>
+            </article>
+
+            <article class="gallery-item">
+                <div class="img-container">
+                    <img src="ProgressReport-04.JPG" alt="3Dモデル 正面（STL）">
+                    <div class="img-overlay">
+                        <div class="img-overlay-icon">+</div>
+                    </div>
+                </div>
+                <div class="item-info">
+                    <h3>モデリング詳細（正面）</h3>
+                    <p>テクスチャなしのソリッド表示で、メッシュの凹凸を確認します。</p>
+                </div>
+            </article>
+
+            <article class="gallery-item">
+                <div class="img-container">
+                    <img src="ProgressReport-05.JPG" alt="3Dモデル 背面（STL）">
+                    <div class="img-overlay">
+                        <div class="img-overlay-icon">+</div>
+                    </div>
+                </div>
+                <div class="item-info">
+                    <h3>モデリング詳細（背面）</h3>
+                    <p>背面の形状、特に縫い目などのモデリング状況です。</p>
+                </div>
+            </article>
+
+        </section>
+    </main>
+
+    <!-- モーダルウィンドウ -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <button class="modal-close" id="modal-close">&times;</button>
+            <img src="" alt="Enlarged Image" id="modal-img">
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Your Name/Company. All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            /* =========================================
+               1. ダークモード/ライトモード 切り替え機能
+               ========================================= */
+            const themeToggleBtn = document.getElementById('theme-toggle');
+            const themeIcon = document.getElementById('theme-icon');
+            const themeText = document.getElementById('theme-text');
+            const body = document.body;
+
+            // 初期化: 保存された設定がない場合はデフォルトをダークにする
+            const savedTheme = localStorage.getItem('portfolio-theme');
+            
+            if (savedTheme === 'light') {
+                enableLightMode();
+            } else {
+                // 保存なし、または 'dark' の場合はダークモード（HTMLのデフォルトに合わせる）
+                enableDarkMode();
+            }
+
+            themeToggleBtn.addEventListener('click', () => {
+                if (body.getAttribute('data-theme') === 'dark') {
+                    enableLightMode();
+                } else {
+                    enableDarkMode();
+                }
+            });
+
+            function enableDarkMode() {
+                body.setAttribute('data-theme', 'dark');
+                localStorage.setItem('portfolio-theme', 'dark');
+                themeIcon.textContent = '??';
+                themeText.textContent = 'Light Mode';
+            }
+
+            function enableLightMode() {
+                body.removeAttribute('data-theme');
+                localStorage.setItem('portfolio-theme', 'light');
+                themeIcon.textContent = '??';
+                themeText.textContent = 'Dark Mode';
+            }
+
+            /* =========================================
+               2. スクロール時のフェードインアニメーション
+               ========================================= */
+            const galleryItems = document.querySelectorAll('.gallery-item');
+            
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px 0px -50px 0px',
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.classList.add('visible');
+                        }, index * 100);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            galleryItems.forEach(item => {
+                observer.observe(item);
+            });
+
+            /* =========================================
+               3. 画像拡大モーダル機能
+               ========================================= */
+            const modal = document.getElementById('modal');
+            const modalImg = document.getElementById('modal-img');
+            const modalClose = document.getElementById('modal-close');
+
+            galleryItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const imgSrc = item.querySelector('img').src;
+                    modalImg.src = imgSrc;
+                    modal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                });
+            });
+
+            const closeModal = () => {
+                modal.classList.remove('active');
+                setTimeout(() => { modalImg.src = ''; }, 400);
+                document.body.style.overflow = '';
+            };
+
+            modalClose.addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) closeModal();
+            });
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && modal.classList.contains('active')) closeModal();
+            });
+
+        });
+    </script>
+</body>
+</html>
